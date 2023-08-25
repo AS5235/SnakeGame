@@ -65,10 +65,12 @@ class Apple:
     def __init__(self):
 
         # 2D Tuple : random (x, y) coordinates
-        self.position = (random.randint(0, GRID_WIDTH - 1), random.randint(0, GRID_HEIGHT - 1))
+        self.position = (random.randint(2, GRID_WIDTH - 2), random.randint(2, GRID_HEIGHT - 2))
 
     def random_pos(self):
-        self.position = (random.randint(0, GRID_WIDTH - 1), random.randint(0, GRID_HEIGHT - 1))
+        x = random.randint(2, GRID_WIDTH - 2)
+        y = random.randint(2, GRID_HEIGHT - 2)
+        self.position = (x, y)
 
     def draw(self):
         pygame.draw.rect(screen1, APPLE_COLOR, (self.position[0]*CELL_SIZE, self.position[1]*CELL_SIZE, CELL_SIZE, CELL_SIZE))
@@ -118,16 +120,18 @@ def play_step(snake, apple, score, final_move):
             pygame.quit()
             sys.exit()
 
-    reward_acc -= 0.01
-    reward = reward_acc
+    # reward_acc -= 0.01
+    # reward = reward_acc
+    reward = 0
     snake.direction = tuple(final_move)
     snake.move()
     game_over = False
 
     if snake.collide_wall() or snake.collide_self():
         reward = -10
-        reward_acc = 1.0
+        # reward_acc = 1.0
         game_over = True
+
         return reward, game_over, score.current_score
     
     # Snake eats the apple, grows + new apple spawns
@@ -136,7 +140,7 @@ def play_step(snake, apple, score, final_move):
         snake.grow()
         score.increase()
         reward = 10
-        reward_acc = 1.0
+        # reward_acc = 1.0
     
     # Update the UI
     clock.tick(20)
@@ -145,6 +149,9 @@ def play_step(snake, apple, score, final_move):
     apple.draw()
     # score.display()
     pygame.display.flip()
+
+    # print(reward, game_over, score.current_score)
+
     return reward, game_over, score.current_score
 
 

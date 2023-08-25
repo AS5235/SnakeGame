@@ -13,7 +13,7 @@ from collections import deque
 # CONSTANTS
 MAX_MEMORY = 100_000
 BATCH_SIZE = 1000
-ALPHA = 0.01
+ALPHA = 0.001
 
 
 # CLASS INSTANCES
@@ -46,23 +46,30 @@ class Agent:
         point_u = (head_x, head_y - 20)
         point_d = (head_x, head_y + 20)
 
-        dir_l = 0
-        dir_r = 0
-        dir_d = 0
-        dir_u = 0
+        # dir_l = 0
+        # dir_r = 0
+        # dir_d = 0
+        # dir_u = 0
 
-        if snake.direction == (1, 0): # GOES RIGHT
-            dir_r = 1
-        if snake.direction == (-1, 0): # GOES LEFT
-            dir_l = 1
-        if snake.direction == (0, 1): # GOES DOWN
-            dir_d = 1
-        if snake.direction == (0, -1): # GOES UP
-            dir_u = 1
+
+        dir_l = snake.direction == (-1, 0)
+        dir_r = snake.direction == (1, 0)
+        dir_u = snake.direction == (0, -1)
+        dir_d = snake.direction == (0, 1)
+
+        # if snake.direction == (1, 0): # GOES RIGHT
+        #     dir_r = 1
+        # if snake.direction == (-1, 0): # GOES LEFT
+        #     dir_l = 1
+        # if snake.direction == (0, 1): # GOES DOWN
+        #     dir_d = 1
+        # if snake.direction == (0, -1): # GOES UP
+        #     dir_u = 1
 
         # Don't need to check for danger down because snake cannot perform an 180 rotation
         # Array that stores binary representation of the state of the snake
-        state = [(dir_r and (snake.collide_self(point_r) or snake.collide_wall(point_r))) or # Danger straight
+        state = [
+            (dir_r and (snake.collide_self(point_r) or snake.collide_wall(point_r))) or # Danger straight
             (dir_l and (snake.collide_self(point_l) or snake.collide_wall(point_l))) or
             (dir_u and (snake.collide_self(point_u) or snake.collide_wall(point_u))) or
             (dir_d and (snake.collide_self(point_d) or snake.collide_wall(point_d))),
@@ -85,7 +92,7 @@ class Agent:
             apple_x < head_x, # Apple to the left
             apple_x > head_x, # Apple to the right
             apple_y < head_y, # Apple above
-            apple_y > head_y  # Apple below
+            apple_y > head_y, # Apple below
         ]
 
         return np.array(state, dtype = int)
@@ -112,7 +119,8 @@ class Agent:
     def get_action(self, state):
         global exploiting, exploring
         # self.epsilon = 120 - self.num_games
-        self.epsilon = max(10, 120 * (0.995 ** self.num_games))
+        # self.epsilon = max(10, 120 * (0.995 ** self.num_games))
+        self.epsilon = 120 - self.num_games
         # final_move = [0, 0]
 
         move_dict = {
@@ -198,10 +206,6 @@ def train():
             print("RATIO: EXPLORE/EXPLOIT: ", explore_exploit_ratio)
     
         
-            
-
-
-
 
 
 if __name__ == "__main__":
